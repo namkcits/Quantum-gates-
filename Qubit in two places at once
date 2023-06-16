@@ -1,0 +1,29 @@
+from qiskit import QuantumCircuit, Aer, execute
+from qiskit.visualization import circuit_drawer, plot_histogram
+
+# Create a quantum circuit with a single qubit
+circuit = QuantumCircuit(1)
+
+# Apply a Hadamard gate to the qubit
+circuit.h(0)
+
+# Save the circuit in QASM format
+qasm_string = circuit.qasm()
+qasm_file = 'circuit.qasm'
+with open(qasm_file, 'w') as file:
+    file.write(qasm_string)
+print(f"Circuit saved to {qasm_file} in QASM format")
+
+# Visualize the circuit
+circuit_drawer(circuit, output='mpl')
+
+# Simulate the circuit using the statevector_simulator
+simulator = Aer.get_backend('statevector_simulator')
+job = execute(circuit, simulator)
+result = job.result()
+
+# Get the final statevector
+statevector = result.get_statevector()
+
+# Plot the histogram of the probabilities
+plot_histogram([abs(statevector[0])**2, abs(statevector[1])**2])
